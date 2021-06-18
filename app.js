@@ -24,12 +24,20 @@ passport.use(new GitHubStrategy({
   clientSecret: GITHUB_CLIENT_SECRET,
   callbackURL: 'http://localhost:8000/auth/github/callback'
 },
-  function (accessToken, refreshToken, profile, done) {
+
+function (accessToken, refreshToken, profile, done) {
     process.nextTick(function () {
       return done(null, profile);
     });
   }
 ));
+
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/login');
+}
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -53,7 +61,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/users', ensureAuthenticated,usersRouter);
 app.use('/photos', photosRouter);
 
 app.get('/auth/github',
@@ -91,5 +99,7 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+
 
 module.exports = app;
