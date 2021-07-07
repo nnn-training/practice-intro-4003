@@ -34,6 +34,7 @@ passport.use(new GitHubStrategy({
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var photosRouter = require('./routes/photos');
+const router = require('./routes/index');
 
 var app = express();
 app.use(helmet());
@@ -53,8 +54,15 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/users', ensureAuthenticated, usersRouter);
 app.use('/photos', photosRouter);
+
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/login');
+}
 
 app.get('/auth/github',
   passport.authenticate('github', { scope: ['user:email'] }),
