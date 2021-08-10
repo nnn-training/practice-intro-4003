@@ -53,8 +53,18 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/users', ensureAuthenticated, usersRouter);
 app.use('/photos', photosRouter);
+
+// 認証が完了しているか判定するensureAuthenticated関数
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    // 認証完了時のみ次の処理に進む
+    return next();
+  }
+  // 認証されていなければ '/login' へリダイレクト
+  res.redirect('/login');
+}
 
 app.get('/auth/github',
   passport.authenticate('github', { scope: ['user:email'] }),
