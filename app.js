@@ -32,7 +32,7 @@ passport.use(new GitHubStrategy({
 ));
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var usersRouter = require('./routes/users',ensureAuthenticated,usersRouter);
 var photosRouter = require('./routes/photos');
 
 var app = express();
@@ -91,5 +91,13 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+
+function ensureAuthenticated(req,res,next){
+  if(req.isAuthenticated()){
+    return next();
+  }
+  res.redirect('/login')
+}
 
 module.exports = app;
