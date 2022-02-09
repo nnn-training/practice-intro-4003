@@ -75,7 +75,20 @@ app.get('/logout', function (req, res) {
   req.logout();
   res.redirect('/');
 });
+// Access Denied unless authencticated
+app.use('/users', 
+  function(req, res, next){
+    ensureAuthenticated(req, res, next)
+  }, 
+  usersRouter
+);
 
+function ensureAuthenticated(req, res, next){
+  if(req.isAuthenticated()){
+    return next();
+  }
+  res.redirect('/login');
+}
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
