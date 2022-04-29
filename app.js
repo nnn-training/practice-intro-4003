@@ -8,8 +8,8 @@ const session = require('express-session');
 const passport = require('passport');
 const GitHubStrategy = require('passport-github2').Strategy;
 
-const GITHUB_CLIENT_ID = 'f756acb8748f85e2014b';
-const GITHUB_CLIENT_SECRET = '0fc57f6660bd5da78873eeacda8c131859b64f30';
+const GITHUB_CLIENT_ID = '352b886735a809a6da25';
+const GITHUB_CLIENT_SECRET = '179d662118e71cffff41fba6c270d61e6ac23a7f';
 
 passport.serializeUser(function (user, done) {
   done(null, user);
@@ -53,7 +53,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/users', ensureAuthenticated, usersRouter);
 app.use('/photos', photosRouter);
 
 app.get('/auth/github',
@@ -91,5 +91,12 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/login');
+}
 
 module.exports = app;
