@@ -31,6 +31,8 @@ passport.use(new GitHubStrategy({
   }
 ));
 
+
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 const photosRouter = require('./routes/photos');
@@ -52,6 +54,7 @@ app.use(session({ secret: '417cce55dcfcfaeb', resave: false, saveUninitialized: 
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use('/users',usersRouter,ensureAuthenticated);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/photos', photosRouter);
@@ -77,6 +80,13 @@ app.get('/logout', function (req, res, next) {
     res.redirect('/');
   });
 });
+
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/login');
+}
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
