@@ -42,6 +42,7 @@ app.use("/auth/github", async (c, next) => {
     client_id: GITHUB_CLIENT_ID,
     client_secret: GITHUB_CLIENT_SECRET,
     scope: ["user:email"],
+    oauthApp: true,
   });
   return await authHandler(c, next).catch(() => c.redirect("/login"));
 });
