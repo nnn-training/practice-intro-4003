@@ -62,7 +62,7 @@ app.get("/login", (c) => {
       "Login",
       html`
         <h1>Login</h1>
-        <a href="/auth/github">GitHub でログイン</a>
+        <a href="/auth/github">GitHub でログインする</a>
       `,
     ),
   );
