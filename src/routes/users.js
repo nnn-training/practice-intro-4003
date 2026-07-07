@@ -1,9 +1,12 @@
-const { Hono } = require("hono");
+const { Hono } = require('hono');
+const { ensureAuthenticated } = require('../middlewares');
 
 const app = new Hono();
 
-app.get("/", (c) => {
-  return c.text("respond with a resource");
+app.use(ensureAuthenticated());
+
+app.get('/', (c) => {
+  return c.text('respond with a resource');
 });
 
 module.exports = app;
